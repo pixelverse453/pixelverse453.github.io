@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Pro – Tic Twist | Official</title>
+    <!-- Font Awesome for icons (gaming vibe) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            color: #fff;
+        }
+
+        /* Dark overlay for readability & gaming mood */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 20, 0.75);
+            backdrop-filter: blur(3px);
+            z-index: 0;
+        }
+
+        .game-card {
+            position: relative;
+            z-index: 2;
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(18, 22, 35, 0.9);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(255, 215, 0, 0.1) inset;
+            border-radius: 48px;
+            padding: 2.5rem;
+            backdrop-filter: blur(5px);
+            transition: transform 0.2s ease;
+        }
+
+        /* header with icon and title */
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 200, 50, 0.3);
+            padding-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .icon-frame {
+            width: 90px;
+            height: 90px;
+            background: #1e2639;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffbb2e;
+            box-shadow: 0 0 20px #ffbb2e88;
+        }
+
+        .icon-frame img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .title-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #f9d423 0%, #fdaa33 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px #f9a826;
+        }
+
+        .title-section .sub {
+            font-size: 1.3rem;
+            color: #b9c6db;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .title-section .sub i {
+            color: gold;
+        }
+
+        .dl-button-area {
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            background: linear-gradient(145deg, #2d3648, #1b212f);
+            border: 2px solid #ffbb2e;
+            color: #ffbb2e;
+            padding: 1rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px #ffbb2e55;
+            letter-spacing: 1px;
+        }
+
+        .btn-download i {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .btn-download:hover {
+            background: #ffbb2e;
+            color: #0b0e16;
+            border-color: #fff;
+            box-shadow: 0 0 35px gold;
+            transform: scale(1.02);
+        }
+
+        .btn-download:hover i {
+            color: #0b0e16;
+        }
+
+        /* grid layout for details */
+        .game-details {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 2.2rem;
+        }
+
+        .highlights {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 40px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 200, 30, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffdb7e;
+            border-left: 7px solid #ffbb2e;
+            padding-left: 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.4rem 1rem;
+        }
+
+        .feature-item {
+            background: rgba(24, 30, 44, 0.8);
+            border-radius: 28px;
+            padding: 1.3rem 1rem;
+            text-align: center;
+            backdrop-filter: blur(2px);
+            border: 1px solid #3f4a60;
+            transition: 0.15s;
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            color: #fbb73b;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.4rem;
+            color: #fcd88b;
+        }
+
+        .feature-item p {
+            font-size: 0.9rem;
+            color: #b0c0dd;
+        }
+
+        .unique-sell {
+            margin-top: 2rem;
+            background: #0f1420e0;
+            border-radius: 30px;
+            padding: 1.6rem;
+            border: 2px dashed #f9b81b55;
+        }
+
+        .unique-sell h2 {
+            font-size: 1.7rem;
+            color: #ffcf6e;
+            margin-bottom: 1rem;
+        }
+
+        .unique-sell ul {
+            columns: 2;
+            list-style: none;
+            padding-left: 0.5rem;
+        }
+
+        .unique-sell li {
+            margin-bottom: 0.9rem;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .unique-sell li i {
+            color: #fedb82;
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .mode-board {
+            background: #0e121fc9;
+            border-radius: 38px;
+            padding: 1.8rem;
+            border: 1px solid #ebc258;
+        }
+
+        .mode-board h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            gap: 8px;
+            color: #fad36c;
+        }
+
+        .mode-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .mode-tag {
+            background: #252e41;
+            border-radius: 40px;
+            padding: 0.7rem 1.4rem;
+            font-weight: 600;
+            border: 2px solid #b29450;
+            color: #ffe6a6;
+            font-size: 1.1rem;
+        }
+
+        .progress-energy {
+            background: #0b101bb3;
+            border-radius: 38px;
+            padding: 1.8rem;
+            border: 1px solid #b38b40;
+        }
+
+        .meter {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .meter span {
+            font-size: 1.2rem;
+        }
+
+        .meter-bar {
+            height: 18px;
+            background: #262f3f;
+            border-radius: 60px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            width: 70%; /* example regen */
+            height: 100%;
+            background: linear-gradient(90deg, #f6b336, #fdde7c);
+            border-radius: 60px;
+        }
+
+        .regen-note {
+            color: #a7b9da;
+            font-size: 0.95rem;
+        }
+
+        .store-icons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .store-icons i {
+            font-size: 2.2rem;
+            background: #222b3b;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid goldenrod;
+        }
+
+        .credits {
+            margin-top: 2.5rem;
+            background: #03050a80;
+            border-radius: 30px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #565e72;
+            font-size: 0.95rem;
+        }
+
+        .credits a {
+            color: #ffd966;
+            text-decoration: none;
+        }
+
+        .music-credit i {
+            margin-right: 6px;
+            color: #c2a256;
+        }
+
+        .flaticon-credit i {
+            margin: 0 4px;
+        }
+
+        /* small screens */
+        @media (max-width: 1000px) {
+            .game-details {
+                grid-template-columns: 1fr;
+            }
+            .dl-button-area {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            .game-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .unique-sell ul {
+                columns: 1;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .game-card {
+                padding: 1.5rem;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-download {
+                font-size: 1.2rem;
+                padding: 0.8rem 1.5rem;
+            }
+            .title-section h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        .no-draw-badge {
+            background: #c44536;
+            border-radius: 60px;
+            padding: 0.25rem 1rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            color: white;
+        }
+
+        .master-mode-badge {
+            background: #3f2b1c;
+            border-radius: 60px;
+            padding: 0.2rem 1rem;
+            border: 1px solid #b88746;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-card">
+        <!-- Header with icon and download -->
+        <div class="game-header">
+            <div class="icon-frame">
+                <!-- icon.png as specified -->
+                <img src="icon.png" alt="Game Icon" onerror="this.src='https://via.placeholder.com/80?text=🎮'">
+            </div>
+            <div class="title-section">
+                <h1>Tic Tac Toe Pro - Tic Twist</h1>
+                <div class="sub">
+                    <i class="fas fa-crown"></i> No-draw online tactics
+                    <span class="no-draw-badge"><i class="fas fa-times"></i> NO DRAWS (except master)</span>
+                </div>
+            </div>
+            <div class="dl-button-area">
+                <a href="https://play.google.com/store/apps/details?id=com.game.tac_toe&pcampaignid=web_share" class="btn-download" target="_blank" rel="noopener">
+                    <i class="fab fa-google-play"></i> Download
+                </a>
+            </div>
+        </div>
+
+        <!-- Main details row -->
+        <div class="game-details">
+            <!-- Left column: features & highlights -->
+            <div class="highlights">
+                <div class="section-title"><i class="fas fa-bolt"></i> ULTIMATE FEATURES</div>
+                <div class="feature-grid">
+                    <div class="feature-item"><i class="fas fa-infinity"></i><h3>No Draw</h3><p>3x3,4x4,5x5,ROTA rotation</p></div>
+                    <div class="feature-item"><i class="fas fa-brain"></i><h3>Master Mode</h3><p>Ultimate 3x3 mini-grids</p></div>
+                    <div class="feature-item"><i class="fas fa-globe-americas"></i><h3>Global Leaderboard</h3><p>refresh every 30s</p></div>
+                    <div class="feature-item"><i class="fas fa-users"></i><h3>Duo / Trio / SQUOD</h3><p>3x3,4x4,5x5 & 4 players</p></div>
+                    <div class="feature-item"><i class="fas fa-undo-alt"></i><h3>ROTA Mode</h3><p>Ancient Roman circular</p></div>
+                    <div class="feature-item"><i class="fas fa-bolt"></i><h3>Energy system</h3><p>regen 20min / bot games</p></div>
+                </div>
+
+                <!-- unique twist area -->
+                <div class="unique-sell">
+                    <h2><i class="fas fa-dice-d6"></i> Tic Twist — no more draws</h2>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Move limit → older pieces rotate</li>
+                        <li><i class="fas fa-check-circle"></i> 4x4 Trio & 5x5 SQUOD mayhem</li>
+                        <li><i class="fas fa-check-circle"></i> Master mode: board impacts bigger board</li>
+                        <li><i class="fas fa-trophy"></i> Win points by defeating AI</li>
+                        <li><i class="fas fa-calendar-alt"></i> 20-30 day events, exclusive skins</li>
+                        <li><i class="fas fa-tshirt"></i> Store: hoodies, mugs, stickers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right column: modes, progression, etc -->
+            <div class="right-panel">
+                <div class="mode-board">
+                    <h3><i class="fas fa-gamepad"></i> GAME MODES</h3>
+                    <div class="mode-tags">
+                        <span class="mode-tag">DUO 3x3</span>
+                        <span class="mode-tag">TRIO 4x4</span>
+                        <span class="mode-tag">SQUOD 5x5</span>
+                        <span class="mode-tag">MASTER</span>
+                        <span class="mode-tag">ROTA</span>
+                    </div>
+                    <p style="margin-top: 1.2rem; color: #cfdbf5;"><i class="fas fa-rotate"></i> Piece-rotation keeps every match intense. Master mode = ultimate challenge.</p>
+                </div>
+
+                <div class="progress-energy">
+                    <h3><i class="fas fa-chart-line"></i> PROGRESSION & REWARDS</h3>
+                    <div class="meter">
+                        <i class="fas fa-battery-three-quarters" style="color: #f5b342;"></i>
+                        <span>Energy</span>
+                        <div class="meter-bar"><div class="meter-fill"></div></div>
+                        <span>70%</span>
+                    </div>
+                    <div class="regen-note"><i class="far fa-clock"></i> Regenerates every 20 min — used vs bots</div>
+                    <div style="display: flex; gap: 25px; margin-top: 20px; flex-wrap: wrap;">
+                        <div><i class="fas fa-gem" style="color: #fedc8c;"></i> Events: 20-30d themes</div>
+                        <div><i class="fas fa-paint-roller"></i> Free skins (watch ads)</div>
+                    </div>
+                    <div class="store-icons">
+                        <i class="fas fa-tshirt" title="T-shirts"></i>
+                        <i class="fas fa-mug-hot" title="Mugs"></i>
+                        <i class="fas fa-tag" title="Stickers"></i>
+                        <i class="fas fa-hoodie" title="Hoodies"></i>
+                    </div>
+                </div>
+
+                <!-- small extra: online only & visual upgrade -->
+                <div style="background: #1b2333cc; border-radius: 30px; padding: 1.2rem 1.5rem; border: 1px solid #7f6b42;">
+                    <span style="font-weight: bold; font-size: 1.2rem;"><i class="fas fa-wifi" style="color: #ffd966;"></i> Online only</span>
+                    <span style="margin-left: 2rem;"><i class="fas fa-paint-brush"></i> UI overhaul</span>
+                    <span style="margin-left: 2rem;"><i class="fas fa-medal"></i> leaderboard every 30s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- credits / acknowledgement -->
+        <div class="credits">
+            <div class="music-credit">
+                <i class="fas fa-music"></i> “Cosmic Love” by Aavirall (Uppbeat – OPFG3AV0JPCSBDUX)
+            </div>
+            <div class="flaticon-credit">
+                <i class="fas fa-pen-fancy"></i> Icons: mynamepong (Flaticon)
+            </div>
+            <div>
+                <i class="fas fa-copyright"></i> Tic Tac Toe Pro – Tic Twist
+            </div>
+        </div>
+
+        <!-- small footnote: all modes eliminate draw -->
+        <div style="text-align: center; margin-top: 1.5rem; color: #b9b9d0; font-size: 0.9rem; border-top: 1px dashed #696e7e; padding-top: 1rem;">
+            ⚡ Play by login or Guest · Real-time leaderboards · No draws except Master Mode · Energy & events active
+        </div>
+    </div>
+
+    <!-- ensure background images are just references (they won't actually load unless present) 
+         but we keep paths as requested. Also any interactive js (optional console playful) -->
+    <script>
+        (function() {
+            // small dynamic effect: you can add a tiny interactive console easter egg if you want
+            console.log("Tic Tac Toe Pro · Tic Twist website ready. Download and play!");
+            // optional: add a little badge animation? but we keep clean.
+            // the background image and icon are set via CSS url. 
+            // Just to be safe, we handle missing icon with inline fallback (already in img onerror)
+        })();
+    </script>
+    <!-- no extra files, all in one -->
+</body>
+</html>
